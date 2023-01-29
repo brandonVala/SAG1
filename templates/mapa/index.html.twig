@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<!DOCTYPE html>
+
+<head>
+    <title>Mapa!</title>
+    <link Set-Cookie: unpkg.com=1; Max-Age=2600000; Secure />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+
+
+</head>
+<nav>
+
+    <div class="nav-wrapper blue darken-3">
+
+        <a class="brand-logo">Mapa de Visualizacion</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/logout">Cerrar sesion</a></li>
+            <li><a href="/test">informacion</a></li>
+        </ul>
+    </div>
+</nav>
+
+<body>
+
+    <div id="myMap" style="height: 600px"></div>
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <script>
+
+        let myMap;
+        let myLayer;
+        let polyline;
+
+        renderMapa();
+        function renderMapa() {
+            myMap = L.map('myMap').setView([19.45992, -97.6742], 16)
+
+            var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                
+            });
+            osm.addTo(myMap);
+
+            myMap.on('locationfound', (e) => console.log('found', e));
+
+            myMap.locate();
+
+            var marker;
+            function geocerca(){
+                var latlngs = [
+                [19.46070,-97.67524],
+                [19.45919, -97.6753],
+                [19.45883, -97.67332],
+                [19.46063, -97.67315],
+                [19.46063, -97.67316],
+                [19.4607, -97.67523]
+            ];
+
+            L.polyline(latlngs, { color: 'red' }).addTo(myMap);
+            
+            }
+            function update() {
+                myLayer = L.layerGroup();
+                setInterval(function () {
+                    myLayer.clearLayers();
+                    fetch('/getUbicaciones')
+                        .then((response) => response.json())
+                        .then((data) => {
+                            for (ubicacion of data['Ubicaciones']) {
+                                myMarker = L.marker([ubicacion.Latitude, ubicacion.Longitude], { title: ubicacion.id });
+                                myLayer.addLayer(myMarker);
+                            }
+                            myLayer.addTo(myMap);
+                        });
+                }, 2000);
+            }
+
+
+            update();
+            geocerca();
+        
+        }
+    </script>
+
+
+</body>
+
+</html>
+
+
+{% endblock %}

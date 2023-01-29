@@ -1,0 +1,17 @@
+index:
+    path: /
+    controller: App\Controller\HomeController::index
+paginaPrueba:
+    path: /test
+    controller: App\Controller\HomeController::test
+
+    #Nombre de la Ruta.
+getUbicaciones:
+    #Url a la que va acceder 
+    path: /getUbicaciones
+    #Controlador que va a ejecutar
+    controller: App\Controller\UbicacionesController::getUbicaciones
+
+Principal:
+    path: /principal
+    controller: App\controller\PrincipalController::principal
